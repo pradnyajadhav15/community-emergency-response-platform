@@ -98,3 +98,13 @@ Full endpoint reference: `docs/API.md`
 - **AlertNotification** - one row per recipient per channel, with delivery status
 - **IncidentMessage** - chat thread per alert
 - **ResponderAssignment** - responder status tracking
+
+## Tests
+
+25 API tests covering authentication, role permissions, emergency contact
+rules, the full SOS workflow, escalation tiers, and incident thread privacy.
+
+```powershell
+cd backend
+python manage.py test
+```
