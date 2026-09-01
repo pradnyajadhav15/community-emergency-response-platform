@@ -43,13 +43,11 @@ class SOSAlertSerializer(serializers.ModelSerializer):
             "resolved_at", "closed_at",
         ]
 
+    def get_flat_label(self, obj):
+        return str(obj.flat) if obj.flat else ""
+
 
 class SOSCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SOSAlert
         fields = ["category", "message", "latitude", "longitude", "address"]
-
-def _flat_label(self, obj):
-    return str(obj.flat) if obj.flat else ""
-
-SOSAlertSerializer.get_flat_label = _flat_label
