@@ -1,0 +1,306 @@
+﻿{
+  "info": {
+    "name": "CERP - Community Emergency Response Platform",
+    "description": "Infosys Springboard Batch 3 project API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000/api" },
+    { "key": "token", "value": "" },
+    { "key": "alert_id", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/register/", "host": ["{{base_url}}"], "path": ["auth", "register", ""] },
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"new@test.com\",\n  \"password\": \"Cerp@2026Pass\",\n  \"password2\": \"Cerp@2026Pass\",\n  \"first_name\": \"New\",\n  \"role\": \"RESIDENT\",\n  \"phone\": \"9999999999\"\n}" }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": ["pm.collectionVariables.set(\"token\", pm.response.json().access);"], "type": "text/javascript" }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login/", "host": ["{{base_url}}"], "path": ["auth", "login", ""] },
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"resident1\",\n  \"password\": \"Resident@2026\"\n}" }
+          }
+        },
+        {
+          "name": "Current User",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/auth/me/", "host": ["{{base_url}}"], "path": ["auth", "me", ""] }
+          }
+        },
+        {
+          "name": "Save Push Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/auth/push-token/", "host": ["{{base_url}}"], "path": ["auth", "push-token", ""] },
+            "body": { "mode": "raw", "raw": "{\n  \"expo_push_token\": \"ExponentPushToken[xxxxxxxx]\"\n}" }
+          }
+        },
+        {
+          "name": "Toggle Availability",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/auth/availability/", "host": ["{{base_url}}"], "path": ["auth", "availability", ""] },
+            "body": { "mode": "raw", "raw": "{\n  \"is_available\": true\n}" }
+          }
+        },
+        {
+          "name": "Contact Directory",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/auth/directory/", "host": ["{{base_url}}"], "path": ["auth", "directory", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Emergency Contacts",
+      "item": [
+        {
+          "name": "List Contacts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/auth/emergency-contacts/", "host": ["{{base_url}}"], "path": ["auth", "emergency-contacts", ""] }
+          }
+        },
+        {
+          "name": "Add Contact",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/auth/emergency-contacts/", "host": ["{{base_url}}"], "path": ["auth", "emergency-contacts", ""] },
+            "body": { "mode": "raw", "raw": "{\n  \"full_name\": \"Ramesh Jadhav\",\n  \"phone\": \"9812345678\",\n  \"email\": \"ramesh@test.com\",\n  \"relationship\": \"Father\",\n  \"escalation_level\": 1,\n  \"order\": 1\n}" }
+          }
+        },
+        {
+          "name": "Send Verification Code",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/auth/emergency-contacts/1/send_code/", "host": ["{{base_url}}"], "path": ["auth", "emergency-contacts", "1", "send_code", ""] }
+          }
+        },
+        {
+          "name": "Verify Contact",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/auth/emergency-contacts/1/verify/", "host": ["{{base_url}}"], "path": ["auth", "emergency-contacts", "1", "verify", ""] },
+            "body": { "mode": "raw", "raw": "{\n  \"code\": \"123456\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Society Management",
+      "item": [
+        {
+          "name": "List Societies",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/societies/", "host": ["{{base_url}}"], "path": ["societies", ""] }
+          }
+        },
+        {
+          "name": "List Blocks",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/blocks/", "host": ["{{base_url}}"], "path": ["blocks", ""] }
+          }
+        },
+        {
+          "name": "List Flats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/flats/", "host": ["{{base_url}}"], "path": ["flats", ""] }
+          }
+        },
+        {
+          "name": "My Resident Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/residents/my-profile/", "host": ["{{base_url}}"], "path": ["residents", "my-profile", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. SOS Alerts",
+      "item": [
+        {
+          "name": "Raise SOS",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": ["pm.collectionVariables.set(\"alert_id\", pm.response.json().id);"], "type": "text/javascript" }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/sos/", "host": ["{{base_url}}"], "path": ["sos", ""] },
+            "body": { "mode": "raw", "raw": "{\n  \"category\": \"MEDICAL\",\n  \"message\": \"Chest pain, need help\",\n  \"latitude\": 18.5204,\n  \"longitude\": 73.8567\n}" }
+          }
+        },
+        {
+          "name": "List Alerts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/sos/", "host": ["{{base_url}}"], "path": ["sos", ""] }
+          }
+        },
+        {
+          "name": "Active Alerts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/sos/active/", "host": ["{{base_url}}"], "path": ["sos", "active", ""] }
+          }
+        },
+        {
+          "name": "Notification Log",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/sos/{{alert_id}}/notifications/", "host": ["{{base_url}}"], "path": ["sos", "{{alert_id}}", "notifications", ""] }
+          }
+        },
+        {
+          "name": "Acknowledge",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/sos/{{alert_id}}/acknowledge/", "host": ["{{base_url}}"], "path": ["sos", "{{alert_id}}", "acknowledge", ""] }
+          }
+        },
+        {
+          "name": "Accept (Responder)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/sos/{{alert_id}}/accept/", "host": ["{{base_url}}"], "path": ["sos", "{{alert_id}}", "accept", ""] }
+          }
+        },
+        {
+          "name": "Escalate Manually",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/sos/{{alert_id}}/escalate/", "host": ["{{base_url}}"], "path": ["sos", "{{alert_id}}", "escalate", ""] }
+          }
+        },
+        {
+          "name": "Resolve",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/sos/{{alert_id}}/resolve/", "host": ["{{base_url}}"], "path": ["sos", "{{alert_id}}", "resolve", ""] },
+            "body": { "mode": "raw", "raw": "{\n  \"resolution_notes\": \"Ambulance arrived, resident stable\"\n}" }
+          }
+        },
+        {
+          "name": "Close",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/sos/{{alert_id}}/close/", "host": ["{{base_url}}"], "path": ["sos", "{{alert_id}}", "close", ""] }
+          }
+        },
+        {
+          "name": "My In-App Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/notifications/", "host": ["{{base_url}}"], "path": ["notifications", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Incident Response",
+      "item": [
+        {
+          "name": "Post Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/incidents/messages/", "host": ["{{base_url}}"], "path": ["incidents", "messages", ""] },
+            "body": { "mode": "raw", "raw": "{\n  \"alert\": {{alert_id}},\n  \"body\": \"On my way, 2 minutes out.\"\n}" }
+          }
+        },
+        {
+          "name": "Read Thread",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/incidents/messages/?alert={{alert_id}}", "host": ["{{base_url}}"], "path": ["incidents", "messages", ""], "query": [{ "key": "alert", "value": "{{alert_id}}" }] }
+          }
+        },
+        {
+          "name": "List Assignments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/incidents/assignments/", "host": ["{{base_url}}"], "path": ["incidents", "assignments", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Analytics",
+      "item": [
+        {
+          "name": "Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/dashboard/stats/", "host": ["{{base_url}}"], "path": ["dashboard", "stats", ""] }
+          }
+        }
+      ]
+    }
+  ]
+}
