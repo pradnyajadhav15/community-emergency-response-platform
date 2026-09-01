@@ -37,6 +37,8 @@ pip install -r requirements.txt
 ```
 
 Create `backend/.env`:
+
+```
 DEBUG=True
 SECRET_KEY=your-secret-key
 DB_NAME=cerp_db
@@ -45,6 +47,7 @@ DB_PASSWORD=your-password
 DB_HOST=127.0.0.1
 DB_PORT=5432
 ESCALATION_WINDOW_MINUTES=15
+```
 
 Then:
 
