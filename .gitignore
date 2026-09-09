@@ -10,3 +10,7 @@ staticfiles/
 node_modules/
 .next/
 .expo/
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
