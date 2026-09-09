@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -34,7 +34,7 @@ export default function Register() {
     setLoading(true);
     try {
       await signUp(form);
-      router.replace("/home");
+      router.replace("/(tabs)");
     } catch (e) {
       setError(apiError(e, "Registration failed."));
     } finally {

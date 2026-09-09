@@ -1,4 +1,4 @@
-﻿import { Redirect } from "expo-router";
+import { Redirect } from "expo-router";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 import { useAuth } from "../src/auth";
@@ -17,7 +17,7 @@ export default function Index() {
     );
   }
 
-  return <Redirect href={user ? "/home" : "/login"} />;
+  return <Redirect href={user ? "/(tabs)" : "/login"} />;
 }
 
 const styles = StyleSheet.create({

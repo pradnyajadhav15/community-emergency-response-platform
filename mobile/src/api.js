@@ -1,4 +1,4 @@
-﻿import axios from "axios";
+import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 // Your laptop's LAN IP. Update this if your network changes.

@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link, useRouter } from "expo-router";
 import {
   KeyboardAvoidingView,
@@ -31,7 +31,7 @@ export default function Login() {
     setLoading(true);
     try {
       await signIn(username.trim(), password);
-      router.replace("/home");
+      router.replace("/(tabs)");
     } catch (e) {
       setError(apiError(e, "Login failed. Check your credentials."));
     } finally {
