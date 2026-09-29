@@ -1,0 +1,17 @@
+name: Run escalations
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  escalate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger escalation check
+        run: |
+          curl --fail --silent --show-error --max-time 120 \
+            -X POST "${{ secrets.CERP_API_URL }}/api/internal/run-escalations/" \
+            -H "X-Cron-Token: ${{ secrets.CRON_TOKEN }}"
