@@ -2,7 +2,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 // Your laptop's LAN IP. Update this if your network changes.
-export const BASE_URL = "http://10.137.141.188:8000";
+export const BASE_URL = "https://community-emergency-response-platform.onrender.com";
 
 const api = axios.create({
   baseURL: `${BASE_URL}/api`,
