@@ -1,4 +1,4 @@
-﻿from rest_framework import viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,6 +14,14 @@ from .serializers import (
 )
 
 
+def filter_int(qs, request, param, field):
+    """Apply an integer filter; malformed input returns nothing instead of a server error."""
+    value = request.query_params.get(param)
+    if value is None:
+        return qs
+    return qs.filter(**{field: int(value)}) if value.isdigit() else qs.none()
+
+
 class SocietyViewSet(viewsets.ModelViewSet):
     queryset = Society.objects.all()
     serializer_class = SocietySerializer
@@ -26,8 +34,7 @@ class BlockViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = Block.objects.select_related("society")
-        society = self.request.query_params.get("society")
-        return qs.filter(society_id=society) if society else qs
+        return filter_int(qs, self.request, "society", "society_id")
 
 
 class FlatViewSet(viewsets.ModelViewSet):
@@ -36,8 +43,7 @@ class FlatViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = Flat.objects.select_related("block", "block__society")
-        block = self.request.query_params.get("block")
-        return qs.filter(block_id=block) if block else qs
+        return filter_int(qs, self.request, "block", "block_id")
 
 
 class ResidentProfileViewSet(viewsets.ModelViewSet):

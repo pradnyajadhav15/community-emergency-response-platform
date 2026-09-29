@@ -7,6 +7,9 @@ from .models import EmergencyContact
 
 User = get_user_model()
 
+# Administrator accounts are created by existing administrators, never self-registered.
+SELF_REGISTER_ROLES = ("RESIDENT", "GUARDIAN", "VOLUNTEER", "SECURITY")
+
 
 class UserSerializer(serializers.ModelSerializer):
     role_display = serializers.CharField(source="get_role_display", read_only=True)
@@ -31,6 +34,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             "username", "email", "password", "password2",
             "first_name", "last_name", "role", "phone",
         ]
+
+    def validate_role(self, value):
+        if value not in SELF_REGISTER_ROLES:
+            raise serializers.ValidationError("This role cannot be self-registered.")
+        return value
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password2"]:
