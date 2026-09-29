@@ -92,3 +92,17 @@ Every alert generates one `AlertNotification` row per recipient per channel:
 - `SMS` - console output in development, Twilio-ready in production
 - `EMAIL` - console backend in development, SMTP in production
 - `IN_APP` - stored for retrieval via `/notifications/`
+
+## Administration
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/auth/users/` | List all users. Filter with `?role=VOLUNTEER`. Administrators only |
+| PATCH | `/auth/users/{id}/` | Change `role`, `society`, `is_active`, `is_available`. Administrators only |
+
+## System
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/` (site root) | Health check returning service status |
+| POST | `/internal/run-escalations/` | Runs the escalation check. Requires header `X-Cron-Token`. Returns 503 if not configured, 403 on a wrong token |

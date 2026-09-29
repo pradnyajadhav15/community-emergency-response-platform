@@ -1,33 +1,72 @@
-﻿# Community Emergency Response Platform (CERP)
+# Community Emergency Response Platform (CERP)
 
-Infosys Springboard Virtual Internship - Batch 3
+Infosys Springboard Virtual Internship, Batch 3
 
-A platform that lets residents of gated societies raise emergency SOS alerts,
-which are routed to guardians, security staff, volunteers and neighbours through
-a configurable escalation workflow.
+Residents of gated societies raise an SOS with one tap. Alerts reach guardians, security staff, volunteers, and neighbours through a configurable escalation workflow, with every notification and response tracked.
 
-## Tech Stack
+## Live deployment
+
+| Component | URL |
+|---|---|
+| Admin portal | https://community-emergency-response-platfo.vercel.app |
+| REST API | https://community-emergency-response-platform.onrender.com |
+| Django admin | https://community-emergency-response-platform.onrender.com/admin/ |
+
+The API runs on a free tier and may take up to a minute to respond after a long idle period.
+
+### Demo accounts (mobile app)
+
+| Username | Role | Password |
+|---|---|---|
+| resident1 | Resident | Cerp@2026Pass |
+| guard1 | Guardian | Cerp@2026Pass |
+| secure1 | Security | Cerp@2026Pass |
+| volun1 | Volunteer | Cerp@2026Pass |
+
+Demo data only. Administrator credentials are shared separately.
+
+## Features
+
+- Five roles: resident, guardian, volunteer, security, administrator
+- Society, block, flat, and resident mapping
+- Three-tier emergency contacts with verification
+- One-tap SOS with category, message, and GPS location
+- Notification engine: push, SMS, email, in-app, each delivery logged
+- Routing to guardians, security, available volunteers, and the community
+- Automatic escalation on a configurable window, scheduled every 15 minutes
+- First-responder lock, incident chat, responder assignment, full lifecycle
+- Analytics: totals, resolution time, category and status breakdown, delivery rate
+- Admin portal for monitoring alerts and managing societies and users
+
+## Tech stack
 
 | Layer | Technology |
 |---|---|
-| Backend | Django 6.1 + Django REST Framework |
-| Database | PostgreSQL 16 |
-| Auth | JWT (djangorestframework-simplejwt) |
-| Push | Expo Push API |
-| SMS | Console stub (Twilio-ready) |
-| Email | Django SMTP backend |
-| Mobile | React Native (Expo) - in progress |
-| Admin portal | Next.js - in progress |
+| API | Django 6.1, Django REST Framework, SimpleJWT |
+| Database | PostgreSQL (Neon in production) |
+| Mobile | React Native, Expo SDK 57, Expo Router |
+| Admin portal | Next.js (App Router) |
+| Hosting | Render (API), Vercel (portal), EAS Build (APK) |
+| Scheduler | GitHub Actions |
 
-## Modules Implemented
+## Repository layout
+backend/ Django API (accounts, societies, alerts, incidents)
+mobile/ Expo mobile app
+admin/ Next.js admin portal
+docs/ Architecture, database, API, mobile, user manual, Postman collection
+.github/ Scheduled escalation workflow
 
-1. Resident, Society and Emergency Contact Management
-2. SOS Alert and Emergency Notification Engine
-3. Community Response and Guardian Escalation
-4. Incident Lifecycle and Chat
-5. Reporting and Analytics
+## Documentation
 
-## Local Setup
+- [System architecture](docs/ARCHITECTURE.md)
+- [Database design](docs/DATABASE.md)
+- [API reference](docs/API.md) and [Postman collection](docs/CERP.postman_collection.json)
+- [Mobile app](docs/MOBILE_APP.md)
+- [User manual](docs/USER_MANUAL.md)
+
+## Local setup
+
+### Backend
 
 ```powershell
 cd backend
@@ -37,74 +76,54 @@ pip install -r requirements.txt
 ```
 
 Create `backend/.env`:
-
-```
 DEBUG=True
-SECRET_KEY=your-secret-key
+SECRET_KEY=any-long-random-string
 DB_NAME=cerp_db
 DB_USER=postgres
 DB_PASSWORD=your-password
 DB_HOST=127.0.0.1
 DB_PORT=5432
-ESCALATION_WINDOW_MINUTES=15
-```
-
-Then:
+ESCALATION_WINDOW_MINUTES=2
+CRON_TOKEN=local-dev-token
 
 ```powershell
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py seed_demo
-python manage.py runserver
+python manage.py runserver 0.0.0.0:8000
 ```
 
-## Demo Accounts
-
-| Username | Role | Password |
-|---|---|---|
-| resident1 | Resident | Resident@2026 |
-| guard1 | Guardian | Cerp@2026Pass |
-| secure1 | Security | Cerp@2026Pass |
-| volun1 | Volunteer | Cerp@2026Pass |
-
-## Escalation Workflow
-
-1. Resident triggers SOS. Primary guardian, security, volunteers and the
-   community are notified immediately.
-2. If nobody accepts within `ESCALATION_WINDOW_MINUTES`, the alert escalates
-   to the secondary guardian.
-3. After a further window, it escalates to the emergency contact tier.
-4. Any responder can accept, chat on the incident thread, and resolve.
-
-Escalation runs via a management command, scheduled with Task Scheduler or cron:
+### Admin portal
 
 ```powershell
-python manage.py run_escalations
+cd admin
+npm install
+npm run dev
 ```
 
-## API
+Opens on http://localhost:3000. Set `NEXT_PUBLIC_API_URL` to point at a non-local API.
 
-Import `docs/CERP.postman_collection.json` into Postman. Run **Login** first -
-it stores the JWT automatically for all other requests.
+### Mobile app
 
-Full endpoint reference: `docs/API.md`
+```powershell
+cd mobile
+npm install
+npx expo start --clear
+```
 
-## Database Schema
-
-- **User** - custom model with 5 roles, society link, push token, availability
-- **Society / Block / Flat / ResidentProfile** - physical structure and mapping
-- **EmergencyContact** - 3 escalation tiers per resident
-- **SOSAlert** - alert with category, location, status, escalation level
-- **AlertNotification** - one row per recipient per channel, with delivery status
-- **IncidentMessage** - chat thread per alert
-- **ResponderAssignment** - responder status tracking
+Set `BASE_URL` in `mobile/src/api.js` to your API address.
 
 ## Tests
 
-25 API tests covering authentication, role permissions, emergency contact
-rules, the full SOS workflow, escalation tiers, and incident thread privacy.
+30 automated API tests covering authentication, permissions, emergency contact rules, the SOS workflow, escalation tiers, incident privacy, admin user management, and the scheduler endpoint.
 
 ```powershell
 cd backend
 python manage.py test
 ```
+
+## Escalation scheduling
+
+Locally: `python manage.py run_escalations`
+
+Production: `.github/workflows/escalations.yml` calls `POST /api/internal/run-escalations/` every 15 minutes with the `X-Cron-Token` header. Requires repository secrets `CERP_API_URL` and `CRON_TOKEN`.
