@@ -6,7 +6,7 @@ export const BASE_URL = "https://community-emergency-response-platform.onrender.
 
 const api = axios.create({
   baseURL: `${BASE_URL}/api`,
-  timeout: 15000,
+  timeout: 60000,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -42,7 +42,7 @@ api.interceptors.response.use(
 );
 
 export function apiError(error, fallback = "Something went wrong.") {
-  if (error.code === "ECONNABORTED") return "Request timed out. Is the server running?";
+  if (error.code === "ECONNABORTED") return "The server is waking up. Please try again in a few seconds.";
   if (!error.response) return "Cannot reach the server. Check WiFi and the server address.";
   const data = error.response.data;
   if (typeof data === "string") return data;
