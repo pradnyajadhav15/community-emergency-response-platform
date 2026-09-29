@@ -112,3 +112,21 @@ class EmergencyContactViewSet(viewsets.ModelViewSet):
             contact.save(update_fields=["is_verified"])
             return Response({"detail": "Contact verified."})
         return Response({"detail": "Invalid code."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+from .permissions import IsSocietyAdmin
+from .serializers import AdminUserSerializer
+
+
+class AdminUserViewSet(viewsets.ModelViewSet):
+    """Society administrators list users and change role, society, or active status."""
+    serializer_class = AdminUserSerializer
+    permission_classes = [IsSocietyAdmin]
+    http_method_names = ["get", "patch", "head", "options"]
+
+    def get_queryset(self):
+        qs = User.objects.select_related("society").order_by("username")
+        role = self.request.query_params.get("role")
+        if role:
+            qs = qs.filter(role=role)
+        return qs

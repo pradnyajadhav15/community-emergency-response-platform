@@ -16,9 +16,11 @@ import api, { apiError } from "../../src/api";
 import { useAuth } from "../../src/auth";
 import { colors, statusColors } from "../../src/theme";
 import { Badge, Banner, Button, Card } from "../../src/ui";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function IncidentDetail() {
   const { id } = useLocalSearchParams();
+  const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const [alert, setAlert] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -89,7 +91,7 @@ export default function IncidentDetail() {
     <KeyboardAvoidingView
       style={styles.flex}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={90}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
       <ScrollView contentContainerStyle={styles.scroll}>
         <Banner message={error} />
@@ -152,7 +154,7 @@ export default function IncidentDetail() {
         ))}
       </ScrollView>
 
-      <View style={styles.composer}>
+      <View style={[styles.composer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
         <TextInput
           value={draft}
           onChangeText={setDraft}

@@ -1,4 +1,4 @@
-﻿from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -16,9 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             "id", "username", "email", "first_name", "last_name",
             "role", "role_display", "phone", "is_phone_verified",
-            "is_available", "date_joined",
+            "is_available", "is_staff", "date_joined",
         ]
-        read_only_fields = ["id", "role", "is_phone_verified", "date_joined"]
+        read_only_fields = ["id", "role", "is_phone_verified", "is_staff", "date_joined"]
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -92,3 +92,20 @@ class EmergencyContactSerializer(serializers.ModelSerializer):
                 {"order": "A contact already exists at this level and order."}
             )
         return attrs
+
+
+class AdminUserSerializer(serializers.ModelSerializer):
+    role_display = serializers.CharField(source="get_role_display", read_only=True)
+    society_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "id", "username", "email", "first_name", "last_name",
+            "role", "role_display", "phone", "society", "society_name",
+            "is_active", "is_available", "is_staff", "date_joined", "last_login",
+        ]
+        read_only_fields = ["id", "username", "is_staff", "date_joined", "last_login"]
+
+    def get_society_name(self, obj):
+        return obj.society.name if obj.society else ""

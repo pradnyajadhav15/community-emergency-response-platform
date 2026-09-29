@@ -1,7 +1,8 @@
-﻿from django.urls import include, path
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    AdminUserViewSet,
     AvailabilityView,
     DirectoryView,
     EmergencyContactViewSet,
@@ -13,6 +14,7 @@ from .views import (
 
 router = DefaultRouter()
 router.register("emergency-contacts", EmergencyContactViewSet, basename="emergency-contact")
+router.register("users", AdminUserViewSet, basename="admin-user")
 
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
