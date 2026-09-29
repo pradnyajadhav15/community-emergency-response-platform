@@ -11,7 +11,16 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Trigger escalation check
+        env:
+          API_URL: ${{ secrets.CERP_API_URL }}
+          CRON_TOKEN: ${{ secrets.CRON_TOKEN }}
         run: |
-          curl --fail --silent --show-error --max-time 120 \
-            -X POST "${{ secrets.CERP_API_URL }}/api/internal/run-escalations/" \
-            -H "X-Cron-Token: ${{ secrets.CRON_TOKEN }}"
+          BASE="${API_URL%/}"
+          CODE=$(curl --silent --show-error --max-time 120 \
+            -o response.json -w "%{http_code}" \
+            -X POST "$BASE/api/internal/run-escalations/" \
+            -H "X-Cron-Token: $CRON_TOKEN")
+          echo "HTTP status: $CODE"
+          cat response.json
+          echo
+          if [ "$CODE" != "200" ]; then exit 1; fi
