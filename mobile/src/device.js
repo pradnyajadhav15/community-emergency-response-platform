@@ -4,15 +4,12 @@ import { Platform } from "react-native";
 
 import api from "./api";
 
-// expo-notifications removed remote push from Expo Go in SDK 53.
-// Import it lazily so the app still runs in Expo Go; push works in a dev build.
-const isExpoGo = Constants.appOwnership === "expo";
+// Expo Go dropped remote push on Android in SDK 53. Skip there; the APK build supports it.
+const isExpoGo =
+  Constants.executionEnvironment === "storeClient" || Constants.appOwnership === "expo";
 
 export async function registerPushToken() {
-  if (isExpoGo) {
-    console.log("Push notifications require a development build. Skipping in Expo Go.");
-    return null;
-  }
+  if (isExpoGo) return null;
 
   try {
     const Notifications = require("expo-notifications");
@@ -42,12 +39,13 @@ export async function registerPushToken() {
     const existing = await Notifications.getPermissionsAsync();
     let granted = existing.status;
     if (granted !== "granted") {
-      const asked = await Notifications.requestPermissionsAsync();
-      granted = asked.status;
+      granted = (await Notifications.requestPermissionsAsync()).status;
     }
     if (granted !== "granted") return null;
 
-    const { data } = await Notifications.getExpoPushTokenAsync();
+    const projectId =
+      Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+    const { data } = await Notifications.getExpoPushTokenAsync({ projectId });
     await api.post("/auth/push-token/", { expo_push_token: data });
     return data;
   } catch (e) {

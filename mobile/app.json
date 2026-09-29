@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "cerp",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "resizeMode": "contain",
@@ -13,9 +13,17 @@
     },
     "ios": { "supportsTablet": true },
     "android": {
+      "package": "com.pradnyajadhav.cerp",
       "adaptiveIcon": { "backgroundColor": "#0F172A" },
       "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
-    "plugins": ["expo-router", "expo-secure-store", "expo-location", "expo-notifications"]
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      ["expo-location", {
+        "locationWhenInUsePermission": "CERP attaches your location to emergency alerts so responders can find you."
+      }],
+      ["expo-notifications", { "color": "#DC2626" }]
+    ]
   }
 }
