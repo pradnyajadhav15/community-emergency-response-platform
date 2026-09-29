@@ -15,3 +15,6 @@ mobile/.expo/
 mobile/dist/
 mobile/web-build/
 .env.production
+
+.coverage
+htmlcov/
