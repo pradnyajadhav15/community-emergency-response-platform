@@ -73,3 +73,21 @@ class EmergencyContactTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
         self.assertFalse(self.user.is_available)
+
+
+class AdminUserEndpointTests(APITestCase):
+    def test_non_admin_is_forbidden(self):
+        user = User.objects.create_user(username="plainres", password="Cerp@2026Pass", role="RESIDENT")
+        self.client.force_authenticate(user)
+        self.assertEqual(self.client.get("/api/auth/users/").status_code, 403)
+
+    def test_admin_can_change_role(self):
+        admin = User.objects.create_user(username="boss", password="Cerp@2026Pass", role="ADMIN")
+        target = User.objects.create_user(username="target", password="Cerp@2026Pass", role="RESIDENT")
+        self.client.force_authenticate(admin)
+        response = self.client.patch(
+            f"/api/auth/users/{target.id}/", {"role": "VOLUNTEER"}, format="json"
+        )
+        self.assertEqual(response.status_code, 200)
+        target.refresh_from_db()
+        self.assertEqual(target.role, "VOLUNTEER")

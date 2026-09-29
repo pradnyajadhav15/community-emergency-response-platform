@@ -125,3 +125,25 @@ class SOSWorkflowTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["total_alerts"], 1)
         self.assertEqual(response.data["active_alerts"], 1)
+
+
+from django.test import override_settings
+
+
+class SchedulerEndpointTests(APITestCase):
+    url = "/api/internal/run-escalations/"
+
+    @override_settings(CRON_TOKEN="")
+    def test_disabled_without_token_configured(self):
+        self.assertEqual(self.client.post(self.url).status_code, 503)
+
+    @override_settings(CRON_TOKEN="correct-token")
+    def test_rejects_wrong_token(self):
+        response = self.client.post(self.url, HTTP_X_CRON_TOKEN="wrong")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(CRON_TOKEN="correct-token")
+    def test_runs_with_correct_token(self):
+        response = self.client.post(self.url, HTTP_X_CRON_TOKEN="correct-token")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["detail"], "ok")
