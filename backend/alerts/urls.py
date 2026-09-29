@@ -1,6 +1,7 @@
-﻿from django.urls import include, path
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
+from .internal import run_escalations
 from .stats import DashboardStatsView
 from .views import MyNotificationViewSet, SOSAlertViewSet
 
@@ -10,5 +11,6 @@ router.register("notifications", MyNotificationViewSet, basename="notification")
 
 urlpatterns = [
     path("dashboard/stats/", DashboardStatsView.as_view(), name="dashboard-stats"),
+    path("internal/run-escalations/", run_escalations, name="run-escalations"),
     path("", include(router.urls)),
 ]
