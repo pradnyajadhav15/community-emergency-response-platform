@@ -63,6 +63,7 @@ docs/ Architecture, database, API, mobile, user manual, Postman collection
 - [API reference](docs/API.md) and [Postman collection](docs/CERP.postman_collection.json)
 - [Mobile app](docs/MOBILE_APP.md)
 - [User manual](docs/USER_MANUAL.md)
+- [Test plan](docs/TEST_PLAN.md) and [test report](docs/TEST_REPORT.md)
 
 ## Local setup
 
@@ -115,7 +116,7 @@ Set `BASE_URL` in `mobile/src/api.js` to your API address.
 
 ## Tests
 
-30 automated API tests covering authentication, permissions, emergency contact rules, the SOS workflow, escalation tiers, incident privacy, admin user management, and the scheduler endpoint.
+45 automated API tests (86% coverage), including a dedicated security suite. See [Test plan](docs/TEST_PLAN.md) and [Test report](docs/TEST_REPORT.md).
 
 ```powershell
 cd backend
